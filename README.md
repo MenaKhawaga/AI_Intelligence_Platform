@@ -1,132 +1,765 @@
 # AI Intelligence Platform
 
-An AI-powered intelligence platform that collects technology/AI information from multiple sources, processes and summarizes it, detects trends, and exposes an authenticated **AI Agent** that can autonomously choose application tools to answer questions with evidence from the platform.
+An AI-powered intelligence platform for collecting, processing, analyzing, and presenting AI and technology information from multiple sources.
 
-## Core capabilities
+The platform combines automated data collection, AI-based processing, PostgreSQL storage, trend analysis, RAG-based knowledge retrieval, and a LangGraph tool-calling AI Agent through a FastAPI backend and a web dashboard.
 
-- Multi-source collection: RSS, GitHub, Hacker News, arXiv, Reddit
-- Cleaning, normalization, filtering, deduplication, classification, entity extraction, ranking
-- LLM-based structured summarization
-- SQLAlchemy database with Alembic migrations
-- Trend clustering and explainable trend scoring
-- LangGraph Research Graph
-- **RAG / local knowledge base**: chunking, TF-IDF embeddings, cosine-similarity retrieval, lightweight reranking, and persisted metadata (article, source, URL, published date, category) — see `app/rag/`
-- LangChain + LangGraph tool-calling AI Agent, with a hard cap on tool-call rounds (`MAX_TOOL_CALLS` in `app/graph/agent_graph.py`) to prevent runaway loops
-- FastAPI backend with centralized logging, CORS, and friendly (non-leaking) error responses
-- JWT authentication with salted (PBKDF2-HMAC-SHA256) password hashing
-- Polished dark-themed vanilla HTML/CSS/JS dashboard (login/register, chat, intelligence feed, trends, knowledge base, analytics)
-- Direct Python/virtual-environment execution — no Docker, no external infra
+---
 
-## AI Agent flow
+## Overview
+
+The **AI Intelligence Platform** is designed to transform raw AI and technology information into structured and useful intelligence.
+
+The platform collects information from multiple sources, processes and filters the collected data, generates summaries, stores the results in PostgreSQL, and provides users with an AI Agent that can search the platform's knowledge and use application tools to answer questions.
+
+It also provides an administration dashboard for managing platform data and monitoring AI Agent activity.
+
+---
+
+## Main Features
+
+### Data Collection
+
+The platform can collect AI and technology information from multiple sources, including:
+
+* RSS feeds
+* GitHub
+* Hacker News
+* arXiv
+* Reddit
+
+Collected data is normalized before entering the processing pipeline.
+
+---
+
+### Data Processing
+
+The research pipeline performs several processing stages:
+
+* Data cleaning
+* Normalization
+* Filtering
+* Deduplication
+* Classification
+* Entity extraction
+* Relevance scoring
+* AI summarization
+* Database persistence
+* Trend analysis
+
+The processing pipeline is designed to convert raw collected information into structured intelligence articles.
+
+---
+
+### PostgreSQL Database
+
+The project uses **PostgreSQL** as the main database.
+
+Database access is implemented using:
+
+* SQLAlchemy ORM
+* SQLAlchemy sessions
+* Alembic migrations
+* Repository-based database operations
+
+The database contains the main platform entities such as:
+
+* Users
+* Articles
+* Topics
+* Sources
+* Agent Activity
+* Other application-related data
+
+---
+
+## AI Agent
+
+The platform includes an authenticated AI Agent built using:
+
+* LangChain
+* LangGraph
+* LLM APIs
+* Tool Calling
+
+The Agent receives a user query and can decide whether it needs to use one or more application tools before generating the final answer.
+
+### Agent Flow
 
 ```text
-User -> FastAPI -> JWT Auth -> AI Agent (LangGraph, max 6 tool-call rounds)
-                              |
-                              +-> search_articles          (stored articles, keyword match)
-                              +-> get_topic_articles        (articles for a stored topic)
-                              +-> list_trends                (stored topics/trends)
-                              +-> search_knowledge_base      (RAG: local vector index)
-                              +-> run_fresh_research          (re-runs the research graph)
-                              |
-                              v
-                         Tool Results
-                              |
-                              v
-                         Final Answer + Sources
+User
+  |
+  v
+FastAPI /chat
+  |
+  v
+Authentication
+  |
+  v
+LangGraph AI Agent
+  |
+  +----> search_articles
+  |
+  +----> get_topic_articles
+  |
+  +----> list_trends
+  |
+  +----> search_knowledge_base
+  |
+  +----> run_fresh_research
+  |
+  v
+Tool Results
+  |
+  v
+AI Agent
+  |
+  v
+Final Answer
 ```
 
-The model decides when a tool is needed. The agent can call multiple tools before returning its final answer, up to `MAX_TOOL_CALLS` rounds, after which the graph ends gracefully with whatever answer/context it has rather than looping indefinitely.
+The Agent uses tool calling to access information stored inside the platform instead of relying only on the model's internal knowledge.
 
-## Research flow
+A maximum number of tool-call rounds is used to prevent the Agent from entering an endless tool-calling loop.
+
+---
+
+## Agent Tools
+
+The current Agent can use application tools such as:
+
+### `search_articles`
+
+Searches stored intelligence articles using the user's query.
+
+### `get_topic_articles`
+
+Retrieves articles related to a stored topic.
+
+### `list_trends`
+
+Retrieves available trend information used by the platform.
+
+### `search_knowledge_base`
+
+Searches the local knowledge base using the RAG pipeline.
+
+### `run_fresh_research`
+
+Triggers fresh research through the platform's research pipeline when new information is required.
+
+---
+
+## RAG / Knowledge Base
+
+The platform includes a local knowledge-base system used by the AI Agent.
+
+The RAG pipeline allows the platform to retrieve relevant information from stored articles before generating an answer.
+
+The knowledge-base functionality includes:
+
+* Article indexing
+* Text chunking
+* Embedding generation
+* Similarity-based retrieval
+* Metadata storage
+* Relevant document retrieval
+* Category filtering
+* Knowledge-base rebuilding
+
+Relevant metadata can include:
+
+* Article ID
+* Title
+* Source
+* URL
+* Published date
+* Category
+
+The RAG implementation is located under:
 
 ```text
-Sources -> Collect -> Process -> Summarize -> Persist -> Trends -> Index hook
+app/rag/
 ```
 
-## Run directly with Python
+---
 
-```bash
-python -m venv .venv
-# Windows: .venv\\Scripts\\activate
-# Linux/macOS: source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-python main.py
+## Research Pipeline
+
+The main research workflow follows this general structure:
+
+```text
+Sources
+   |
+   v
+Collect
+   |
+   v
+Process
+   |
+   v
+Summarize
+   |
+   v
+Persist
+   |
+   v
+Trend Analysis
+   |
+   v
+Knowledge Base
 ```
 
-The API is then available at `http://127.0.0.1:8000` and interactive docs at `/docs`.
+The research pipeline can be executed through the FastAPI backend.
 
-Set a strong `JWT_SECRET_KEY` and an `OPENAI_API_KEY` in `.env` before using the real AI Agent.
+The system can also trigger fresh research when requested by the AI Agent.
+
+---
+
+## Admin Dashboard
+
+The platform includes an administration interface for managing and monitoring the system.
+
+The Admin Dashboard provides functionality for managing platform data such as:
+
+* Users
+* Topics
+* Sources
+* Articles
+* AI Agent activity
+
+The Admin functionality is protected through authentication and admin-level authorization.
+
+### Agent Activity
+
+The platform records AI Agent activity to provide administrators with information about Agent usage.
+
+Agent activity can include:
+
+* User ID
+* User query
+* Tools used
+* Success status
+* Creation timestamp
+
+This information can be used to monitor how the AI Agent is being used inside the platform.
+
+---
+
+## FastAPI Backend
+
+The backend is implemented using **FastAPI**.
+
+The backend provides:
+
+* Authentication
+* User management
+* Intelligence APIs
+* Research APIs
+* RAG APIs
+* AI Agent APIs
+* Analytics
+* Admin functionality
+* Database access
+
+Interactive API documentation is available through:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+---
 
 ## Authentication
 
-- `POST /auth/register`
-- `POST /auth/login`
-- `GET /auth/me`
+The platform uses JWT-based authentication.
 
-Protected intelligence/agent endpoints require `Authorization: Bearer <token>`.
+Authentication includes:
 
-## Main API
+```text
+POST /auth/register
+POST /auth/login
+GET  /auth/me
+```
 
-- `GET /health`
-- `POST /auth/register`, `POST /auth/login`, `GET /auth/me`
-- `POST /chat` — authenticated AI Agent (tool-calling, capped at `MAX_TOOL_CALLS` rounds)
-- `GET /intelligence/articles`
-- `GET /trends`
-- `GET /repositories` — GitHub-sourced items
-- `GET /analytics/overview` — totals, source/category distribution, average relevance, recent intelligence
-- `POST /research/run` — runs the collect -> process -> summarize -> persist -> trends pipeline once
-- `POST /rag/index` — build/rebuild the knowledge-base index for up to `limit` articles
-- `POST /rag/search` — search the knowledge base (`query`, `limit`, optional `category`)
-- `POST /knowledge/rebuild` — zero-argument rebuild (used by the frontend's "Build / Rebuild Knowledge Base" button)
+Protected endpoints require:
 
-All routes above except `/health`, `/auth/register`, and `/auth/login` require `Authorization: Bearer <token>`. Every route appears in Swagger at `/docs`.
+```text
+Authorization: Bearer <token>
+```
+
+Passwords are stored using secure password hashing rather than storing plain-text passwords.
+
+---
+
+## Main API Areas
+
+The exact available routes can be viewed through the FastAPI Swagger documentation.
+
+Important API areas include:
+
+```text
+/health
+/auth
+/chat
+/intelligence
+/research
+/rag
+/knowledge
+/analytics
+/admin
+```
+
+The `/docs` endpoint provides the current API specification generated directly from the FastAPI application.
+
+---
 
 ## Frontend
 
-Served by FastAPI itself at `/frontend` (mounted from `create_app()`), or open `frontend/index.html` directly / via a static server such as VS Code Live Server on `:5500` — `frontend/app.js` picks the right `API_BASE` automatically (same-origin when served on `:8000`, otherwise `http://127.0.0.1:8000`).
+The platform includes a web frontend built using:
 
-Pages: Dashboard, AI Agent chat (with sources and tool-call count shown per answer), Intelligence Feed, Trends, Knowledge Base (build/rebuild + search), Analytics. Login/registration have client-side validation, loading states, and error messages; the JWT is stored in `localStorage` for this local academic project (not intended for production use).
+* HTML
+* CSS
+* JavaScript
 
-## End-to-end demo
+The frontend communicates with the FastAPI backend.
 
-Run the server, then execute:
+Main application pages include:
 
-```bash
-./scripts/e2e_demo.sh
+* Login
+* Registration
+* Dashboard
+* Intelligence Feed
+* AI Agent Chat
+* Trends
+* Knowledge Base
+* Analytics
+* Admin Dashboard
+
+The frontend is located under:
+
+```text
+frontend/
 ```
 
-The complete scenario is: register/login -> authenticated agent request -> model chooses tools -> tools query intelligence -> agent synthesizes evidence -> API returns answer and sources.
+The FastAPI application can serve the frontend directly.
 
-## Project documentation
+---
 
-- `docs/FINAL_PRESENTATION.md` — final presentation narrative and architecture
-- `docs/GIT_WORKFLOW.md` — Git/GitHub team workflow
-- `scripts/e2e_demo.sh` — live demo script
+## n8n Integration
 
-## Optional enhancements after mandatory requirements
+The project also includes **n8n** workflows for automation and notifications.
 
-RAG / knowledge base is implemented (see `app/rag/` and the AI Agent flow above) — it is not treated as a future enhancement. Customer satisfaction analysis, voice support, multi-agent architecture beyond the current tool-calling agent, real-time WebSocket chat, cloud deployment, and advanced monitoring remain intentionally out of scope for the core delivery.
+The n8n integration can be used for automation tasks such as:
 
-## Tests
+* High-relevance article notifications
+* Research-related automation
+* Platform event handling
+* External workflow execution
 
-Run:
+The n8n-related files are located under:
+
+```text
+n8n/
+```
+
+Webhook URLs and other sensitive configuration values should be stored in `.env` and should never be committed to GitHub.
+
+---
+
+## Project Structure
+
+The main project structure is organized as follows:
+
+```text
+AI_Intelligence_Platform/
+│
+├── app/
+│   ├── api/
+│   │   ├── admin/
+│   │   ├── ...
+│   │
+│   ├── core/
+│   │   └── config.py
+│   │
+│   ├── database/
+│   │   ├── base_class.py
+│   │   ├── session.py
+│   │   ├── repositories/
+│   │   └── migrations/
+│   │
+│   ├── models/
+│   │   ├── user.py
+│   │   ├── article.py
+│   │   ├── topic.py
+│   │   ├── source.py
+│   │   ├── agent_activity.py
+│   │   └── ...
+│   │
+│   ├── graph/
+│   │   ├── agent_graph.py
+│   │   ├── agent_state.py
+│   │   └── agent_tools.py
+│   │
+│   ├── rag/
+│   │   └── ...
+│   │
+│   ├── processing/
+│   │   └── ...
+│   │
+│   ├── collectors/
+│   │   └── ...
+│   │
+│   ├── summarization/
+│   │   └── ...
+│   │
+│   ├── trends/
+│   │   └── ...
+│   │
+│   └── services/
+│       └── ...
+│
+├── frontend/
+│   ├── index.html
+│   ├── login.html
+│   ├── admin/
+│   ├── ...
+│   ├── style.css
+│   └── app.js
+│
+├── n8n/
+│   └── ...
+│
+├── scripts/
+│   └── ...
+│
+├── tests/
+│   └── ...
+│
+├── docs/
+│   └── ...
+│
+├── alembic.ini
+├── main.py
+├── requirements.txt
+├── .env.example
+├── .gitignore
+└── README.md
+```
+
+---
+
+## Configuration
+
+The project uses environment variables for configuration.
+
+Create a local `.env` file based on `.env.example`.
+
+Example:
+
+```env
+DATABASE_URL=postgresql+psycopg://username:password@localhost:5432/ai_intelligence_platform
+
+JWT_SECRET_KEY=your-secret-key
+
+LLM_PROVIDER=groq
+LLM_MODEL=your-model-name
+
+GROQ_API_KEY=your-api-key
+
+N8N_HIGH_RELEVANCE_WEBHOOK_URL=your-webhook-url
+```
+
+The exact variables depend on the current configuration in:
+
+```text
+app/core/config.py
+```
+
+### Important
+
+Never commit `.env` to GitHub.
+
+The project uses `.gitignore` to exclude sensitive configuration files such as:
+
+```text
+.env
+.venv/
+__pycache__/
+*.pyc
+```
+
+Only `.env.example` should be committed if it is provided without real secrets.
+
+---
+
+## PostgreSQL Setup
+
+Create a PostgreSQL database for the project.
+
+Example database name:
+
+```text
+ai_intelligence_platform
+```
+
+Then configure the connection string in `.env`:
+
+```env
+DATABASE_URL=postgresql+psycopg://username:password@localhost:5432/ai_intelligence_platform
+```
+
+The application uses SQLAlchemy to connect to PostgreSQL.
+
+---
+
+## Database Migrations
+
+Alembic is used for database migrations.
+
+After configuring the database, run:
+
+```bash
+python -m alembic upgrade head
+```
+
+To create a new migration after model changes:
+
+```bash
+python -m alembic revision --autogenerate -m "update database models"
+```
+
+Then apply the migration:
+
+```bash
+python -m alembic upgrade head
+```
+
+---
+
+## Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/MenaKhawaga/AI_Intelligence_Platform.git
+cd AI_Intelligence_Platform
+```
+
+### 2. Create a virtual environment
+
+Windows:
+
+```powershell
+python -m venv .venv
+```
+
+Activate it:
+
+```powershell
+.venv\Scripts\activate
+```
+
+Linux/macOS:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Configure environment variables
+
+Create:
+
+```text
+.env
+```
+
+from:
+
+```text
+.env.example
+```
+
+Then configure PostgreSQL, authentication, LLM, and n8n settings.
+
+### 5. Run database migrations
+
+```bash
+python -m alembic upgrade head
+```
+
+### 6. Start the application
+
+```bash
+python main.py
+```
+
+The API will be available at:
+
+```text
+http://127.0.0.1:8000
+```
+
+Swagger documentation:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## Running the Frontend
+
+The frontend can be served through the FastAPI application.
+
+Alternatively, the `frontend/` directory can be opened using a local static server such as VS Code Live Server.
+
+The frontend communicates with the FastAPI backend running on:
+
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## Testing
+
+Run the test suite from the project root:
 
 ```bash
 pytest -q
 ```
 
-Tests cover collectors, processing, summarization, database/repositories, LangGraph research/chat/agent orchestration (including the tool-call loop cap), the RAG pipeline (indexing, retrieval, metadata, empty database, top-k, category filtering, persistence/reload), trends, and authentication/API behavior.
+Tests cover major application components including:
 
-## Verification status of this revision
+* Authentication
+* Database operations
+* Repositories
+* Collectors
+* Processing
+* Summarization
+* Research workflow
+* AI Agent
+* LangGraph orchestration
+* Tool calling
+* RAG
+* Trends
+* API behavior
 
-This revision was produced and statically reviewed in an environment with no network access, so dependencies could not be installed and nothing below could be executed there. Before a demo, run these yourself from the project root with the virtual environment activated:
+---
 
-```bash
-python -m compileall -q app main.py       # syntax check (already passed statically)
-python -m alembic upgrade head             # requires local execution
-pytest -q                                  # requires local execution
-python main.py                             # requires local execution + OPENAI_API_KEY for /chat
-```
+## Technology Stack
 
-If anything fails, the fastest path to a fix is pasting the exact error output back for another pass.
+### Backend
+
+* Python
+* FastAPI
+* SQLAlchemy
+* PostgreSQL
+* Alembic
+* Pydantic
+
+### AI / Agent
+
+* LangChain
+* LangGraph
+* LLM APIs
+* Tool Calling
+* RAG
+
+### Data Sources
+
+* RSS
+* GitHub
+* Hacker News
+* arXiv
+* Reddit
+
+### Frontend
+
+* HTML
+* CSS
+* JavaScript
+
+### Automation
+
+* n8n
+
+### Development
+
+* Git
+* GitHub
+* Pytest
+* Python Virtual Environment
+
+---
+
+## Security
+
+The project follows several security practices:
+
+* JWT authentication
+* Password hashing
+* Protected API endpoints
+* Admin authorization
+* Environment variables for secrets
+* `.env` excluded from Git
+* Non-sensitive `.env.example` configuration
+* Input validation through FastAPI/Pydantic
+* Controlled AI Agent tool execution
+
+This project is intended primarily as an academic project and local development system and should be further hardened before production deployment.
+
+---
+
+## Future Improvements
+
+Possible future improvements include:
+
+* Cloud deployment
+* Advanced monitoring
+* Real-time notifications
+* WebSocket-based Agent communication
+* More data sources
+* Improved semantic search
+* Advanced vector databases
+* More advanced multi-agent workflows
+* Automated evaluation of AI Agent responses
+* Production-grade observability
+* Role-based permissions with more granular access control
+
+---
+
+## Academic Project
+
+**AI Intelligence Platform** is an academic software project focused on combining:
+
+* Artificial Intelligence
+* AI Agents
+* LLMs
+* Tool Calling
+* RAG
+* Data Engineering
+* Backend Development
+* Database Systems
+* Information Retrieval
+* Trend Analysis
+* Web Development
+* Workflow Automation
+
+The project demonstrates how these technologies can be integrated into a single end-to-end intelligence platform.
+
+---
+
+## Repository
+
+GitHub:
+
+https://github.com/MenaKhawaga/AI_Intelligence_Platform
