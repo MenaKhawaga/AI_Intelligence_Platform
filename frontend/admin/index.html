@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Intelligence Platform — Admin</title>
+
+    <!-- Main platform styles -->
+    <link rel="stylesheet" href="../style.css?v=6">
+
+    <!-- Admin-specific styles -->
+    <link rel="stylesheet" href="admin.css?v=2">
+</head>
+
+<body>
+
+    <!-- =========================
+         Background
+    ========================== -->
+    <div class="ambient-svg-bg " aria-hidden="true">
+        <div class="aurora aurora-1"></div>
+        <div class="aurora aurora-2"></div>
+        <div class="aurora aurora-3"></div>
+
+        <svg class="radar-bg"
+             viewBox="0 0 1000 700"
+             preserveAspectRatio="none">
+
+            <defs>
+                <radialGradient id="radarGlow"
+                                cx="50%"
+                                cy="50%"
+                                r="50%">
+
+                    <stop offset="0%"
+                          stop-opacity="0.18"></stop>
+
+                    <stop offset="70%"
+                          stop-opacity="0.04"></stop>
+
+                    <stop offset="100%"
+                          stop-opacity="0"></stop>
+                </radialGradient>
+            </defs>
+
+            <ellipse
+                cx="500"
+                cy="350"
+                rx="380"
+                ry="250"
+                fill="url(#radarGlow)">
+            </ellipse>
+
+            <ellipse
+                cx="500"
+                cy="350"
+                rx="280"
+                ry="180"
+                fill="none">
+            </ellipse>
+
+            <ellipse
+                cx="500"
+                cy="350"
+                rx="180"
+                ry="115"
+                fill="none">
+            </ellipse>
+        </svg>
+    </div>
+
+
+    <!-- Faint Animated Knowledge Graph -->
+    <canvas
+        id="graphCanvas"
+        class="graph-bg-canvas"
+        aria-hidden="true">
+    </canvas>
+
+
+    <!-- =========================
+         Admin Shell
+    ========================== -->
+    <div id="adminShell" class="admin-shell">
+
+
+        <!-- =========================
+             Topbar
+             Same structure as User Platform
+        ========================== -->
+        <header class="topbar">
+
+            <div class="topbar-brand">
+
+                <div class="brand-icon"
+                     title="Multi-Source Signal Radar">
+
+                    <!-- Animated Intelligence Radar & Sensor Core Icon -->
+                    <svg class="radar-icon-svg"
+                         width="22"
+                         height="22"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="1.2"
+                            stroke-opacity="0.25"
+                            fill="none">
+                        </circle>
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="6"
+                            stroke="currentColor"
+                            stroke-width="1.2"
+                            stroke-opacity="0.35"
+                            class="radar-concentric-pulse"
+                            fill="none">
+                        </circle>
+
+                        <g class="radar-sweep-beam">
+
+                            <path
+                                d="M12 2a10 10 0 0 1 10 10"
+                                stroke-width="2.4"
+                                stroke="currentColor"
+                                fill="none">
+                            </path>
+
+                            <line
+                                x1="12"
+                                y1="12"
+                                x2="22"
+                                y2="12"
+                                stroke="currentColor"
+                                stroke-width="1.8">
+                            </line>
+
+                            <polygon
+                                points="12,12 22,12 19,5"
+                                fill="currentColor"
+                                fill-opacity="0.16"
+                                stroke="none">
+                            </polygon>
+
+                        </g>
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="2.5"
+                            fill="currentColor">
+                        </circle>
+
+                    </svg>
+
+                </div>
+
+
+                <div>
+
+                    <h1>
+                        AI Intelligence Platform
+                    </h1>
+
+                    <p class="muted"
+                       style="font-size: 11.5px; margin: 0;">
+
+                        Admin Control Center
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+
+                <!-- =========================
+                     Light / Dark Mode
+                ========================== -->
+                <button
+                    id="themeToggle"
+                    class="btn ghost small theme-toggle-btn"
+                    type="button"
+                    aria-label="Toggle light or dark theme"
+                    title="Toggle theme">
+
+                    <svg
+                        class="theme-icon-moon"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <path
+                            d="M21 12.79A9 9 0 1 1 11.21 3
+                               7 7 0 0 0 21 12.79z">
+                        </path>
+
+                    </svg>
+
+
+                    <svg
+                        class="theme-icon-sun"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        style="display:none;">
+
+                        <circle cx="12" cy="12" r="5"></circle>
+
+                        <line x1="12" y1="1"
+                              x2="12" y2="3"></line>
+
+                        <line x1="12" y1="21"
+                              x2="12" y2="23"></line>
+
+                        <line x1="4.22" y1="4.22"
+                              x2="5.64" y2="5.64"></line>
+
+                        <line x1="18.36" y1="18.36"
+                              x2="19.78" y2="19.78"></line>
+
+                        <line x1="1" y1="12"
+                              x2="3" y2="12"></line>
+
+                        <line x1="21" y1="12"
+                              x2="23" y2="12"></line>
+
+                        <line x1="4.22" y1="19.78"
+                              x2="5.64" y2="18.36"></line>
+
+                        <line x1="18.36" y1="5.64"
+                              x2="19.78" y2="4.22"></line>
+
+                    </svg>
+
+                    <span class="theme-text">
+                        Dark
+                    </span>
+
+                </button>
+
+
+                <!-- =========================
+                     Admin User Badge
+                ========================== -->
+                <div class="user-badge">
+
+                    <div
+                        class="user-avatar"
+                        id="adminAvatar">
+
+                        A
+
+                    </div>
+
+
+                    <span
+                        id="adminEmail"
+                        class="muted"
+                        style="color: var(--text-body); font-weight: 500;">
+
+                        Loading...
+
+                    </span>
+
+                </div>
+
+
+                <!-- =========================
+                     Open User Platform
+                ========================== -->
+                <button
+                    id="openUserPlatform"
+                    class="btn ghost small"
+                    type="button"
+                    title="Open User Platform">
+
+                    <span>
+                        Open User Platform
+                    </span>
+
+                </button>
+
+
+                <!-- =========================
+                     Logout
+                ========================== -->
+                <button
+                    id="logoutBtn"
+                    class="btn ghost small"
+                    type="button"
+                    title="Sign out">
+
+                    <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                        <path
+                            d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4">
+                        </path>
+
+                        <polyline
+                            points="16 17 21 12 16 7">
+                        </polyline>
+
+                        <line
+                            x1="21"
+                            y1="12"
+                            x2="9"
+                            y2="12">
+                        </line>
+
+                    </svg>
+
+                    <span>
+                        Log out
+                    </span>
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =========================
+             Admin Layout
+        ========================== -->
+        <div class="admin-layout">
+
+
+            <!-- =========================
+                 Sidebar
+            ========================== -->
+            <aside class="admin-sidebar">
+
+                <div class="sidebar-heading">
+                    ADMIN
+                </div>
+
+
+                <nav class="admin-nav">
+
+                    <button
+                        class="admin-nav-btn active"
+                        data-admin-view="overview"
+                        type="button">
+
+                        <span class="nav-icon">⌂</span>
+                        <span>Overview</span>
+
+                    </button>
+
+
+                    <button
+                        class="admin-nav-btn"
+                        data-admin-view="users"
+                        type="button">
+
+                        <span class="nav-icon">♙</span>
+                        <span>Users</span>
+
+                    </button>
+
+
+                    <button
+                        class="admin-nav-btn"
+                        data-admin-view="articles"
+                        type="button">
+
+                        <span class="nav-icon">▤</span>
+                        <span>Intelligence</span>
+
+                    </button>
+
+
+                    <button
+                        class="admin-nav-btn"
+                        data-admin-view="sources"
+                        type="button">
+
+                        <span class="nav-icon">◉</span>
+                        <span>Sources</span>
+
+                    </button>
+
+
+                    <button
+                        class="admin-nav-btn"
+                        data-admin-view="topics"
+                        type="button">
+
+                        <span class="nav-icon">⌁</span>
+                        <span>Topics & Trends</span>
+
+                    </button>
+
+
+                    <button
+                        class="admin-nav-btn"
+                        data-admin-view="summaries"
+                        type="button">
+
+                        <span class="nav-icon">≡</span>
+                        <span>Summaries</span>
+
+                    </button>
+
+
+                    <button
+                        class="admin-nav-btn"
+                        data-admin-view="activity"
+                        type="button">
+
+                        <span class="nav-icon">◌</span>
+                        <span>Agent Activity</span>
+
+                    </button>
+
+                </nav>
+
+
+                <!-- Admin status -->
+                <div class="admin-status-card">
+
+                    <div class="status-dot"></div>
+
+                    <div>
+
+                        <div class="status-title">
+                            System Status
+                        </div>
+
+                        <div
+                            id="systemStatus"
+                            class="status-value">
+
+                            Checking...
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+
+
+            <!-- =========================
+                 Main Content
+            ========================== -->
+            <main class="admin-main">
+
+
+                <!-- =========================
+                     OVERVIEW
+                ========================== -->
+                <section
+                    id="admin-view-overview"
+                    class="admin-view active">
+
+                    <div class="page-header">
+
+                        <div>
+
+                            <span class="eyebrow">
+                                ADMINISTRATION
+                            </span>
+
+                            <h1>
+                                Platform Overview
+                            </h1>
+
+                            <p>
+                                Monitor users, intelligence data,
+                                trends and AI agent activity.
+                            </p>
+
+                        </div>
+
+                        <div class="page-header-actions">
+
+                            <button
+                                id="refreshOverviewBtn"
+                                class="secondary-btn"
+                                type="button">
+
+                                Refresh
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Statistics -->
+                    <div
+                        id="adminStats"
+                        class="admin-stat-grid">
+
+
+                        <div class="admin-stat-card">
+
+                            <div class="stat-card-label">
+                                Total Users
+                            </div>
+
+                            <div
+                                id="statUsers"
+                                class="stat-card-value">
+
+                                —
+
+                            </div>
+
+                            <div class="stat-card-meta">
+                                Registered accounts
+                            </div>
+
+                        </div>
+
+
+                        <div class="admin-stat-card">
+
+                            <div class="stat-card-label">
+                                Total Articles
+                            </div>
+
+                            <div
+                                id="statArticles"
+                                class="stat-card-value">
+
+                                —
+
+                            </div>
+
+                            <div class="stat-card-meta">
+                                Collected intelligence
+                            </div>
+
+                        </div>
+
+
+                        <div class="admin-stat-card">
+
+                            <div class="stat-card-label">
+                                Total Topics
+                            </div>
+
+                            <div
+                                id="statTopics"
+                                class="stat-card-value">
+
+                                —
+
+                            </div>
+
+                            <div class="stat-card-meta">
+                                Detected topics
+                            </div>
+
+                        </div>
+
+
+                        <div class="admin-stat-card">
+
+                            <div class="stat-card-label">
+                                Agent Activities
+                            </div>
+
+                            <div
+                                id="statActivities"
+                                class="stat-card-value">
+
+                                —
+
+                            </div>
+
+                            <div class="stat-card-meta">
+                                Recorded agent runs
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Overview panels -->
+                    <div class="admin-panel-grid">
+
+                        <div class="admin-panel">
+
+                            <div class="panel-header">
+
+                                <div>
+
+                                    <h2>
+                                        Recent Intelligence
+                                    </h2>
+
+                                    <p>
+                                        Latest collected articles
+                                    </p>
+
+                                </div>
+
+                                <button
+                                    class="panel-link"
+                                    data-admin-view-link="articles"
+                                    type="button">
+
+                                    View all
+
+                                </button>
+
+                            </div>
+
+                            <div
+                                id="overviewArticles"
+                                class="panel-content">
+
+                                <div class="empty-state">
+                                    Loading intelligence...
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="admin-panel">
+
+                            <div class="panel-header">
+
+                                <div>
+
+                                    <h2>
+                                        Recent Agent Activity
+                                    </h2>
+
+                                    <p>
+                                        Latest AI agent operations
+                                    </p>
+
+                                </div>
+
+                                <button
+                                    class="panel-link"
+                                    data-admin-view-link="activity"
+                                    type="button">
+
+                                    View all
+
+                                </button>
+
+                            </div>
+
+                            <div
+                                id="overviewActivity"
+                                class="panel-content">
+
+                                <div class="empty-state">
+                                    Loading activity...
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================
+                     USERS
+                ========================== -->
+                <section
+                    id="admin-view-users"
+                    class="admin-view">
+
+                    <div class="page-header">
+
+                        <div>
+
+                            <span class="eyebrow">
+                                USER MANAGEMENT
+                            </span>
+
+                            <h1>
+                                Users
+                            </h1>
+
+                            <p>
+                                Manage registered platform users
+                                and administrator access.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <h2>
+                                    Registered Users
+                                </h2>
+
+                                <p>
+                                    User accounts and permissions
+                                </p>
+
+                            </div>
+
+                            <div
+                                id="usersCount"
+                                class="panel-count">
+
+                                0 users
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-wrapper">
+
+                            <table class="admin-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th>Admin</th>
+                                        <th>Created</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="usersTableBody">
+
+                                    <tr>
+
+                                        <td
+                                            colspan="5"
+                                            class="table-empty">
+
+                                            Loading users...
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================
+                     ARTICLES
+                ========================== -->
+                <section
+                    id="admin-view-articles"
+                    class="admin-view">
+
+                    <div class="page-header">
+
+                        <div>
+
+                            <span class="eyebrow">
+                                INTELLIGENCE
+                            </span>
+
+                            <h1>
+                                Intelligence Articles
+                            </h1>
+
+                            <p>
+                                Review collected intelligence
+                                stored in the platform.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <h2>
+                                    Articles
+                                </h2>
+
+                                <p>
+                                    Stored intelligence records
+                                </p>
+
+                            </div>
+
+                            <div
+                                id="articlesCount"
+                                class="panel-count">
+
+                                0 articles
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-wrapper">
+
+                            <table class="admin-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Source</th>
+                                        <th>Category</th>
+                                        <th>Relevance</th>
+                                        <th>Published</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="articlesTableBody">
+
+                                    <tr>
+
+                                        <td
+                                            colspan="6"
+                                            class="table-empty">
+
+                                            Loading articles...
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================
+                     SOURCES
+                ========================== -->
+                <section
+                    id="admin-view-sources"
+                    class="admin-view">
+
+                    <div class="page-header">
+
+                        <div>
+
+                            <span class="eyebrow">
+                                DATA SOURCES
+                            </span>
+
+                            <h1>
+                                Sources
+                            </h1>
+
+                            <p>
+                                Monitor the sources used by the
+                                intelligence collection pipeline.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <h2>
+                                    Intelligence Sources
+                                </h2>
+
+                                <p>
+                                    Configured and collected sources
+                                </p>
+
+                            </div>
+
+                            <div
+                                id="sourcesCount"
+                                class="panel-count">
+
+                                0 sources
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="sourcesGrid"
+                            class="sources-grid">
+
+                            <div class="empty-state">
+                                Loading sources...
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================
+                     TOPICS
+                ========================== -->
+                <section
+                    id="admin-view-topics"
+                    class="admin-view">
+
+                    <div class="page-header">
+
+                        <div>
+
+                            <span class="eyebrow">
+                                TRENDS
+                            </span>
+
+                            <h1>
+                                Topics & Trends
+                            </h1>
+
+                            <p>
+                                Monitor topics detected across
+                                collected intelligence.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <h2>
+                                    Detected Topics
+                                </h2>
+
+                                <p>
+                                    Topic activity across articles
+                                </p>
+
+                            </div>
+
+                            <div
+                                id="topicsCount"
+                                class="panel-count">
+
+                                0 topics
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="topicsGrid"
+                            class="topics-grid">
+
+                            <div class="empty-state">
+                                Loading topics...
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================
+                     SUMMARIES
+                ========================== -->
+                <section
+                    id="admin-view-summaries"
+                    class="admin-view">
+
+                    <div class="page-header">
+
+                        <div>
+
+                            <span class="eyebrow">
+                                AI SUMMARIZATION
+                            </span>
+
+                            <h1>
+                                Summaries
+                            </h1>
+
+                            <p>
+                                Review AI-generated summaries
+                                associated with intelligence articles.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <h2>
+                                    Generated Summaries
+                                </h2>
+
+                                <p>
+                                    AI-generated intelligence summaries
+                                </p>
+
+                            </div>
+
+                            <div
+                                id="summariesCount"
+                                class="panel-count">
+
+                                0 summaries
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-wrapper">
+
+                            <table class="admin-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Article</th>
+                                        <th>Headline</th>
+                                        <th>Why It Matters</th>
+                                        <th>Generated</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="summariesTableBody">
+
+                                    <tr>
+
+                                        <td
+                                            colspan="5"
+                                            class="table-empty">
+
+                                            Loading summaries...
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================
+                     AGENT ACTIVITY
+                ========================== -->
+                <section
+                    id="admin-view-activity"
+                    class="admin-view">
+
+                    <div class="page-header">
+
+                        <div>
+
+                            <span class="eyebrow">
+                                AI AGENT
+                            </span>
+
+                            <h1>
+                                Agent Activity
+                            </h1>
+
+                            <p>
+                                Monitor queries, tool usage and
+                                agent execution results.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <h2>
+                                    Agent Operations
+                                </h2>
+
+                                <p>
+                                    Recent AI agent activity
+                                </p>
+
+                            </div>
+
+                            <div
+                                id="activityCount"
+                                class="panel-count">
+
+                                0 activities
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-wrapper">
+
+                            <table class="admin-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>User ID</th>
+                                        <th>Query</th>
+                                        <th>Tools Used</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="activityTableBody">
+
+                                    <tr>
+
+                                        <td
+                                            colspan="6"
+                                            class="table-empty">
+
+                                            Loading agent activity...
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <script src="admin.js?v=1"></script>
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+{
+  "name": "Critical Trend Escalation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "trend-escalation",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a66b4ae3-27de-4e1b-b7d6-4678abe2b5f2",
+      "name": "Webhook",
+      "webhookId": "0f93acd0-9fb0-45b0-855a-f27038e4ea07"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f5fa324f-90db-4c4e-8179-8e160ff79445",
+              "leftValue": "={{ $json.body.score }}",
+              "rightValue": 85,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "0c8a1594-029b-43de-afae-a4d9dd4f30ee",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fromEmail": "seifpicsfire@gmail.com",
+        "toEmail": "seifstore1221@gmail.com",
+        "subject": "=🚨 Critical Trend Detected: {{ $json.body.topic_label }}",
+        "html": "=<h2>🚨 Critical Trend Detected</h2>\n\n<p><strong>Topic:</strong> {{ $json.body.topic_label }}</p>\n\n<p><strong>Score:</strong> {{ $json.body.score }}</p>\n\n<p><strong>Velocity:</strong> {{ $json.body.velocity }}</p>\n\n<p><strong>Article Count:</strong> {{ $json.body.article_count }}</p>\n\n<p>This trend has exceeded the critical threshold and requires attention.</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "b5c75c69-5074-4702-a9de-4a1194d4e60e",
+      "name": "Send an Email",
+      "webhookId": "3714d158-57e4-4104-89a2-81b2655c4c80",
+      "credentials": {
+        "smtp": {
+          "id": "6VB5xLsScOTDcDp6",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c12f6735-c890-475b-bbeb-959bffa817b9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4d736ddf598d29d9fe885e97a2904ce02f9df551193706954b2abc8a9071fc96"
+  },
+  "nodeGroups": [],
+  "id": "qdOjv9xQtCukrNPC",
+  "tags": []
+}

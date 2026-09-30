@@ -1,0 +1,210 @@
+{
+  "name": "Google Sheets Reporting",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "69e395f5-6aa7-450f-a8e2-0c8bd335075b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8000/analytics/overview",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $node[\"Login to Backend\"].json[\"access_token\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "6c64b7c1-fbc6-4ff6-8382-8aee8361a01c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1perPfW1CsEWc81mgrEmdNgcqKYJq1sayWryBRCVZKcY",
+          "mode": "list",
+          "cachedResultName": "AI Intelligence Daily Report",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1perPfW1CsEWc81mgrEmdNgcqKYJq1sayWryBRCVZKcY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1perPfW1CsEWc81mgrEmdNgcqKYJq1sayWryBRCVZKcY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $now.setZone('Africa/Cairo').toFormat('yyyy-MM-dd HH:mm:ss') }}",
+            "total_articles": "={{ $json.total_articles }}",
+            "total_topics": "={{ $json.total_topics }}",
+            "sources": "={{ JSON.stringify($json.sources) }}",
+            "categories": "={{ JSON.stringify($json.categories) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "total_articles",
+              "displayName": "total_articles",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "total_topics",
+              "displayName": "total_topics",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sources",
+              "displayName": "sources",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "categories",
+              "displayName": "categories",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        0
+      ],
+      "id": "e071d745-89b9-44e1-affe-7fa1b7125876",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xuJCGWwNVVRzy1sm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/auth/login",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"Test123456\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a6d0b1f6-4d8a-41c2-8a03-b30971e2cf82",
+      "name": "Login to Backend"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Login to Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login to Backend": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Africa/Cairo",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "344d89ce-f4b2-40a1-8602-2f8290fb9203",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4d736ddf598d29d9fe885e97a2904ce02f9df551193706954b2abc8a9071fc96"
+  },
+  "nodeGroups": [],
+  "id": "x5xoxQK0dPVCJ8dQ",
+  "tags": []
+}

@@ -1,0 +1,24 @@
+# Secrets / environment
+.env
+*.env.local
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+
+# Local data (per docs/GIT_WORKFLOW.md rule 10: never commit local databases)
+data/app.db
+data/chroma/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

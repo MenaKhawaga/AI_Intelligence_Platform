@@ -1,0 +1,116 @@
+{
+  "name": "High-Relevance Article Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "high-relevance-article",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8daedc88-e877-489b-b4b9-da5653e66064",
+      "name": "Webhook",
+      "webhookId": "9354f2ba-5efc-4d57-aa68-0f5e427e79b6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a9082108-a29d-4165-b68c-0a566f8a51cc",
+              "leftValue": "={{ $json.body.relevance_score }}",
+              "rightValue": 0.8,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "fd2ea15e-6c8b-477d-96f0-9f279b7715f9",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fromEmail": "kikizanbi@gmail.com",
+        "toEmail": "=seifstore1221@gmail.com",
+        "subject": "=🚨 High-Relevance Article: {{ $json.body.title }}",
+        "html": "=<h2>🚨 High-Relevance Article Detected</h2>\n\n<p><strong>Title:</strong> {{ $json.body.title }}</p>\n\n<p><strong>Source:</strong> {{ $json.body.source }}</p>\n\n<p><strong>Relevance Score:</strong> {{ $json.body.relevance_score }}</p>\n\n<p><strong>Summary:</strong><br>\n{{ $json.body.summary }}\n</p>\n\n<p>\n<a href=\"{{ $json.body.url }}\">Open Article</a>\n</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "9a2f2e36-803b-4d8f-a050-90032c7c3074",
+      "name": "Send an Email",
+      "webhookId": "8772fb48-674e-4c39-a5c3-ad5f5bd5e975",
+      "credentials": {
+        "smtp": {
+          "id": "6VB5xLsScOTDcDp6",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "31e8ab55-88ac-468d-89c6-b42a260b582d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4d736ddf598d29d9fe885e97a2904ce02f9df551193706954b2abc8a9071fc96"
+  },
+  "nodeGroups": [],
+  "id": "vQzUtXSRKIyV0gMK",
+  "tags": []
+}
